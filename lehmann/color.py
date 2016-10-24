@@ -33,9 +33,9 @@ def avg_color(image):
     return tuple(map(lambda c: int(c), (color)))
 
 
-def extract_palette(image):
+def extract_palette(image, n_colors=16):
     "Extracts a single image palette using imagemagick's `convert`"
-    palette = sp.check_output(['convert', image, '-colors', '16',
+    palette = sp.check_output(['convert', image, '-colors', str(n_colors),
                                '-depth', '8', '-format', "%c", 'histogram:info:'])
     palette = map(lambda l: l.lower(), map(lambda l: l.strip(), palette.split("\n")))
     return filter(lambda c: c, palette)

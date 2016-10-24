@@ -42,7 +42,7 @@ def lehmannise(input_video, output_video, verbose):
     image.copy(imgs_list, TV_DIR, IMG_FORMAT)
 
     msg(">> imgs to video", verbose)
-    video.from_images(os.path.join(TV_DIR, IMG_FORMAT), output_video)
+    video.to_video(os.path.join(TV_DIR, IMG_FORMAT), output_video)
 
     msg(">> cleaning cache dirs", verbose)
     image.clean_cache([FV_DIR, TV_DIR, CACHE_DIR, TEMP_DIR])
