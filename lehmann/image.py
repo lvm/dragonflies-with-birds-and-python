@@ -12,101 +12,98 @@ from shutil import (
 
 
 
-def avg_color_data_original(images_format):
-    result = {}
-    _dict = {}
-    _list = []
+# def avg_color_data(images_format):
+#     result = {}
+#     _dict = {}
+#     _list = []
+#     images = glob(images_format)
 
-    for img in glob(images_format):
-        avg = color.avg_color(img)
-        if not _dict.has_key("{}{}{}".format(*avg)):
-            _dict[ "{}{}{}".format(*avg) ] = img
-            _list.append( avg )
+#     n=0
+#     for img in images:
+#         sys.stdout.write("\r {} of {}".format(n, len(images)))
+#         sys.stdout.flush()
+#         avg = color.avg_color(img)
+#         #avg = color.dominant(img)
+#         if not _dict.has_key("{}{}{}".format(*avg)):
+#             _dict[ "{}{}{}".format(*avg) ] = img
+#             _list.append( avg )
+#         n += 1
 
-    return (_list, _dict)
-
-
-def build_set_original(_list, _dict):
-    image_list = []
-    for c_item in _list:
-        complementary = color.complementary_rgb(c_item)
-        closest_color = color.find_closest(complementary, _list)
-
-        image_list.append(_dict.get("{}{}{}".format(*c_item)))
-        image_list.append(_dict.get("{}{}{}".format(*closest_color)))
-
-    return image_list
+#     return (_list, _dict)
 
 
-def avg_color_data(images_format):
-    result = {}
-    _dict = {}
-    _list = []
+# def build_set(_list, _dict):
+#     image_list = []
+#     _list.sort(key=lambda rgb: color.luminance(*rgb))
+#     for c_item in _list:
+#         #complementary = color.complementary_rgb(c_item)
+#         #closest_color = color.find_closest(complementary, _list)
+#         #close_colors = color.find_close(complementary, _list)
 
-    for img in glob(images_format):
-        sys.stdout.write("\rProcessing: {}".format(img))
-        sys.stdout.flush()
-        pal = color.extract_palette(img,1)
+#         #for x in range(4):
+#         image_list.append(_dict.get("{}{}{}".format(*c_item)))
 
-        rgb_color = (0,0,0)
-        try:
-            rgb_color = map(to_tuple, color.in_format(pal, 'rgb'))[0]
-            _list.append(rgb_color)
-        except:
-            pass
+#         #for x in range(4):
+#         #image_list.append(_dict.get("{}{}{}".format(*closest_color)))
 
-        if not _dict.has_key("{}".format(rgb_color)):
-            _dict["{}".format(rgb_color)] = [img]
-        else:
-            _dict["{}".format(rgb_color)].append(img)
+#     return image_list
 
 
-    print _dict
+# def avg_color_data(images_format):
+#     result = {}
+#     _dict = {}
+#     _list = []
 
-    return (_list, _dict)
+#     for img in glob(images_format):
+#         sys.stdout.write("\rProcessing: {}".format(img))
+#         sys.stdout.flush()
+#         pal = color.extract_palette(img,1)
+
+#         rgb_color = (0,0,0)
+#         try:
+#             rgb_color = map(to_tuple, color.in_format(pal, 'rgb'))[0]
+#             _list.append(rgb_color)
+#         except:
+#             pass
+
+#         if not _dict.has_key("{}".format(rgb_color)):
+#             _dict["{}".format(rgb_color)] = [img]
+#         else:
+#             _dict["{}".format(rgb_color)].append(img)
+
+
+#     print _dict
+
+#     return (_list, _dict)
 
 def dom_color_data(images_format):
     result = {}
     _dict = {}
     _list = []
+    images = glob(images_format)
 
-    for img in glob(images_format):
-        sys.stdout.write("\rProcessing: {}".format(img))
+    n = 0
+    for img in images:
+        sys.stdout.write("\r {} of {}".format(n, len(images)))
         sys.stdout.flush()
-        pal = color.dominant(img)
-
-        rgb_color = pal
-        # rgb_color = (0,0,0)
-        # try:
-        #     rgb_color = map(to_tuple, color.in_format(pal, 'rgb'))[0]
-        #     _list.append(rgb_color)
-        # except:
-        #     pass
+        rgb_color = color.dominant(img)
+        n += 1
 
         if not _dict.has_key("{}".format(rgb_color)):
             _dict["{}".format(rgb_color)] = [img]
         else:
             _dict["{}".format(rgb_color)].append(img)
 
-
-    print _dict
-
-    return (_list, _dict)
-
+    return ([], _dict)
 
 
 def build_set(_list, _dict):
     image_list = []
-    _list.sort(key=lambda rgb: color.rgb_to_hsv(rgb))
-    for c_item in _dict:
-        image_list += _dict.get("{}".format(c_item)) #.append(_dict.get("{}".format(c_item)))
-    #     #complementary = color.complementary_rgb(c_item)
-    #     #closest_color = color.find_closest(complementary, _list)
-
-    #     #image_list.append(_dict.get("{}{}{}".format(*c_item)))
-    #     #image_list.append(_dict.get("{}{}{}".format(*closest_color)))
-
-    #     print c_item
+    _list = _dict.keys()
+    # _list.sort(key=lambda rgb: color.rgb_to_hsv(to_tuple(rgb))) # key=lambda rgb: lum(*rgb))
+    _list.sort( key=lambda rgb: color.luminance(*to_tuple(rgb))) # key=lambda rgb: lum(*rgb))
+    for c_item in _list:
+        image_list += _dict.get("{}".format(c_item))
 
     return image_list
 

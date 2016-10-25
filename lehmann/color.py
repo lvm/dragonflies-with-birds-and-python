@@ -5,6 +5,7 @@ from __future__ import division
 import os
 import re
 import colorsys
+#import colorz
 import subprocess as sp
 from math import sqrt
 
@@ -22,6 +23,12 @@ steve_hollasch_table = {'153,50,204': 'orchid_dark', '85,107,47': 'olive_green_d
 #
 # FUNCS
 #
+
+# def colorz(image):
+#     "Obtains the dominant color of a single image using `color-thief-py`"
+#     cz = colorz.colorz(image)
+#     return cz(image)
+
 
 def dominant(image):
     "Obtains the dominant color of a single image using `color-thief-py`"
@@ -60,10 +67,9 @@ def in_format(palette, format):
     return map(lambda cl: cl.group(format), color_list)
 
 
-
 def get_distance(rgb_a, rgb_b):
     "Calculates the distance between two colors using Euclidean Distances"
-    return sqrt(sum([(c1-c2)**2 for c1, c2 in zip(rgb_a, rgb_b)]))
+    return sqrt(sum([(int(c1)-int(c2))**2 for c1, c2 in zip(rgb_a, rgb_b)]))
 
 
 def find_close(color, color_list):
@@ -74,6 +80,10 @@ def find_close(color, color_list):
 def find_closest(color, color_list):
     "Find the closest color based on `get_distance`"
     return find_close(color, color_list)[0]
+
+
+def luminance(r,g, b):
+    return sqrt( .241 * r + .691 * g + .068 * b )
 
 
 ###

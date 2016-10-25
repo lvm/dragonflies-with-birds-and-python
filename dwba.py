@@ -24,6 +24,12 @@ def msg(msg, verbose=False):
         print ( msg )
 
 
+def save_palette(filename, palette):
+    f = open(filename, 'w')
+    f.write(str(palette))
+    f.close()
+
+
 def lehmannise(input_video, output_video, verbose):
     msg(">> making cache dirs", verbose)
     image.make_cache([CACHE_DIR, FV_DIR, TV_DIR])
@@ -35,6 +41,8 @@ def lehmannise(input_video, output_video, verbose):
     msg(">> get color from imgs", verbose)
     #imgs_data = image.avg_color_data(os.path.join(FV_DIR, IMG_GLOB))
     imgs_data = image.dom_color_data(os.path.join(FV_DIR, IMG_GLOB))
+
+    #save_palette(output_video+".txt", imgs_data)
 
     msg(">> build set of imgs", verbose)
     imgs_list = image.build_set(*imgs_data)

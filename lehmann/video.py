@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import os
+import shlex
 import argparse
 import subprocess as sp
-
 
 __file = os.path.basename(__file__)
 
@@ -13,28 +13,38 @@ def missing_parameters(help_msg):
     print "{}\n{}".format("Missing Parameters!", help_msg)
 
 
-def to_images(video, images_format):
-    """Converts a video to an image sequence.
+# def to_images(video, images_format):
+#     """Converts a video to an image sequence.
+#     Use in conjunction with `--video` and `--image`
+#     {} --to-images --video video.mp4 --image img*.jpg
+#     """.format(__file)
+#     sp.call(['ffmpeg', '-y', '-i', video,
+#              '-q:v', '2', images_format
+#     ])
+
+
+def to_images(video, images_format, fps=12):
+    """Converts a video to an image sequence every N frames (default: 12).
     Use in conjunction with `--video` and `--image`
     {} --to-images --video video.mp4 --image img*.jpg
     """.format(__file)
+    cmd = 'ffmpeg -y -i {} -vf "select=not(mod(n\,{}))"'.format(video, fps)
+    cmd+= ' -vsync vfr -q:v 2 ' + images_format
 
-    sp.call(['ffmpeg', '-y', '-i', video,
-             '-qscale', '0', images_format
-    ])
+    sp.call(shlex.split(cmd))
 
 
-def to_video(images_format, video):
+def to_video(images_format, video, fps=12):
     """Converts an image sequence to a video.
     Use in conjunction with `--video` and `--image`
     {} --to-video --image img*.jpg --video video.mp4
     """.format(__file)
 
     sp.call(['ffmpeg',
-             '-framerate', '9',
+             '-framerate', str(24),
              '-i', images_format,
              '-c:v', 'libx264',
-             '-vf', 'fps=25',
+             # '-vf', 'fps={}'.format(fps),
              '-pix_fmt', 'yuv420p',
              video
     ])
