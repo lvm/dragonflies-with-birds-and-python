@@ -33,7 +33,8 @@ def lehmannise(input_video, output_video, verbose):
                     os.path.join(FV_DIR, IMG_FORMAT))
 
     msg(">> get color from imgs", verbose)
-    imgs_data = image.avg_color_data(os.path.join(FV_DIR, IMG_GLOB))
+    #imgs_data = image.avg_color_data(os.path.join(FV_DIR, IMG_GLOB))
+    imgs_data = image.dom_color_data(os.path.join(FV_DIR, IMG_GLOB))
 
     msg(">> build set of imgs", verbose)
     imgs_list = image.build_set(*imgs_data)

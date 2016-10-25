@@ -8,6 +8,7 @@ import colorsys
 import subprocess as sp
 from math import sqrt
 
+from colorthief import ColorThief
 
 color_match_re = "(\d+),(\d+),(\d+)"
 palette_match_re = "(?P<px>\d+): (?P<rgb>.*) (?P<hex>#[0-9a-f]{6}) (?P<srgb>s?rgb\(\d+,\d+,\d+\))"
@@ -21,6 +22,12 @@ steve_hollasch_table = {'153,50,204': 'orchid_dark', '85,107,47': 'olive_green_d
 #
 # FUNCS
 #
+
+def dominant(image):
+    "Obtains the dominant color of a single image using `color-thief-py`"
+    color_thief = ColorThief(image)
+    return color_thief.get_color(quality=1)
+
 
 def avg_color(image):
     "Obtains the average color of a single image using imagemagick's `convert`"

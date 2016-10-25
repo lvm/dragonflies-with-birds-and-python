@@ -65,6 +65,34 @@ def avg_color_data(images_format):
 
     return (_list, _dict)
 
+def dom_color_data(images_format):
+    result = {}
+    _dict = {}
+    _list = []
+
+    for img in glob(images_format):
+        sys.stdout.write("\rProcessing: {}".format(img))
+        sys.stdout.flush()
+        pal = color.dominant(img)
+
+        rgb_color = pal
+        # rgb_color = (0,0,0)
+        # try:
+        #     rgb_color = map(to_tuple, color.in_format(pal, 'rgb'))[0]
+        #     _list.append(rgb_color)
+        # except:
+        #     pass
+
+        if not _dict.has_key("{}".format(rgb_color)):
+            _dict["{}".format(rgb_color)] = [img]
+        else:
+            _dict["{}".format(rgb_color)].append(img)
+
+
+    print _dict
+
+    return (_list, _dict)
+
 
 
 def build_set(_list, _dict):
