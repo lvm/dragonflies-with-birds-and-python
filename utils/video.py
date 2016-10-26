@@ -41,7 +41,7 @@ def to_video(images_format, video, fps=12):
     """.format(__file)
 
     sp.call(['ffmpeg',
-             '-framerate', str(24),
+             '-framerate', str(fps),
              '-i', images_format,
              '-c:v', 'libx264',
              # '-vf', 'fps={}'.format(fps),
@@ -50,7 +50,7 @@ def to_video(images_format, video, fps=12):
     ])
 
 
-def cut_video(video_in, start, duration):
+def cut(start, duration, video_in, video_out):
     """Cuts a portion of a video.
     Use in conjunction with `--video`, `--start`, `--duration` and (optional)`--video-out`.
     Doesn't re-encode the video by default, except with the `--reencode` flag.
@@ -62,11 +62,11 @@ def cut_video(video_in, start, duration):
              '-ss', start,
              '-t', duration,
              '-c', 'copy',
-             "cut_{}".format(video_in)
+             video_out or "cut_output.mp4"
     ])
 
 
-def cut_video_reencode(video_in, start, duration):
+def cut_reencode(start, duration, video_in, video_out):
     """Cuts a portion of a video.
     Use in conjunction with `--video`, `--start`, `--duration` and (optional)`--re-encode`.
     {} --video-cut --video video.mp4 --start 00:02:30 --duration 00:00:30
@@ -80,7 +80,7 @@ def cut_video_reencode(video_in, start, duration):
              '-c:a', 'aac',
              '-strict', 'experimental',
              '-b', '128k',
-             "cutr_{}".format(video_in)
+             video_out or "cut_output.mp4"
     ])
 
 
@@ -97,6 +97,23 @@ def convert_framerate(video_in, fps):
              '-y',
              "fps_{}".format(video_in)
     ])
+
+
+def length(video_in, show_sexagesimal=False):
+    """Converts the framerate of a video.
+    Use in conjunction with `--video` and `--fps`.
+    {} --convert-framerate --video video.mp4 --fps 12
+    """.format(__file)
+
+    cmd = 'ffprobe -v quiet -show_format {} -i {}'.format(
+        '-sexagesimal' if show_sexagesimal else '',
+        video_in)
+
+    duration = 'duration='
+    output = sp.check_output(shlex.split(cmd))
+    return map(lambda line: line.replace(duration, ''),
+               filter(lambda line: line.startswith(duration),
+                      output.split("\n")))[0]
 
 
 if __name__ == '__main__':
