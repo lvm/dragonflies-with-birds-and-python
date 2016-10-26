@@ -41,7 +41,7 @@ def to_video(images_format, video, fps=12):
     """.format(__file)
 
     sp.call(['ffmpeg',
-             '-framerate', str(24),
+             '-framerate', str(fps),
              '-i', images_format,
              '-c:v', 'libx264',
              # '-vf', 'fps={}'.format(fps),
