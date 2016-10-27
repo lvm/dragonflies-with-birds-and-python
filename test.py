@@ -56,18 +56,18 @@ videos = {
         }
     },
     'car':{
-        'list': './car_list',
-        'video_out': 'car.ogv',
+        'filelist': './car_list',
+        'video_out': './car.mp4',
         'a':{
-            'video_in':"./videos/Ketcham_Home_Movies_1949_Carico.ogv",
-            'video_out':"car_a.ogv",
-            'start':"00:20:55",
-            'duration':"00:00:07"
+            'video_in':"./videos/mexico.mp4",
+            'video_out':"./car_a.mp4",
+            'start':"00:02:45",
+            'duration':"00:00:10"
         },
         'b':{
-            'video_in':"./videos/Ketcham_Home_Movies_1949_Carico.ogv",
-            'video_out':"car_b.ogv",
-            'start':"00:42:00",
+            'video_in':"./videos/mexico.mp4",
+            'video_out':"./car_b.mp4",
+            'start':"00:42:05",
             'duration':"00:00:20"
         }
     },
@@ -77,7 +77,7 @@ videos = {
 
 def build_videos(videos, name):
     v = videos.get(name)
-    cuts = filter(lambda k: k not in ['list', 'video_out'], v.keys())
+    cuts = filter(lambda k: k not in ['filelist', 'video_out'], v.keys())
 
     filelist = []
     for cut in cuts:
@@ -85,7 +85,7 @@ def build_videos(videos, name):
         video.cut(vc.get('start'), vc.get('duration'), vc.get('video_in'), vc.get('video_out'))
         filelist += ["file '{}'".format(vc.get('video_out'))]
 
-    helpers.write_file(v.get('list'), filelist + ["\n"])
-    video.concat(v.get('list'), v.get('video_out'), False)
+    helpers.write_file(v.get('filelist'), filelist)
+    video.concat(v.get('filelist'), v.get('video_out'), False)
 
-build_videos(videos, 'mex')
+build_videos(videos, 'car')

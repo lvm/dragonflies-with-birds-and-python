@@ -44,10 +44,10 @@ def to_video(images_format, video, fps=12):
 
     sp.call(['ffmpeg',
              '-v', 'quiet',
-             '-framerate', str(fps),
+             #'-framerate', str(fps),
              '-i', images_format,
              '-c:v', 'libx264',
-             # '-vf', 'fps={}'.format(fps),
+             '-vf', 'fps={}'.format(fps),
              '-pix_fmt', 'yuv420p',
              video
     ])
@@ -111,7 +111,7 @@ def concat(filelist, video_out, silent=True):
     {} --concatenate --file list.txt
     """.format(__file)
 
-    cmd = "ffmpeg {} -f concat -i {} -c copy {}".format(
+    cmd = "ffmpeg {} -f concat -safe 0 -i {} -c copy {}".format(
         '-v quiet' if silent else '',
         filelist, video_out)
     sp.call(shlex.split(cmd))
