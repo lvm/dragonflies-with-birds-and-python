@@ -57,8 +57,8 @@ def test(input_video):
     sys.exit(0)
 
 def arnoldise(input_video, output_video, start, duration, verbose):
-    video.cut(start, duration, input_video, output_video)
-    video_length = int(float(video.length(output_video)))
+    #video.cut(start, duration, input_video, output_video)
+    video_length = int(float(video.length(input_video)))
 
     #vl = video_length
     filelist = []
@@ -72,8 +72,8 @@ def arnoldise(input_video, output_video, start, duration, verbose):
         #             "cut_s_{}_{}_{}".format(n,x,output_video)
         #         )]* random.randrange(2,10)
 
-        video.cut("00:00:{}".format(t), "00:00:00.500",
-                  output_video, "cut_{}_{}".format(x,output_video))
+        video.cut("00:00:{}".format(t), "00:00:02",
+                  input_video, "cut_{}_{}".format(x,output_video))
 
         filelist += ["file 'cut_{}_{}'".format(x,output_video)] * random.randrange(2,10)
 
