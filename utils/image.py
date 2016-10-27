@@ -9,6 +9,7 @@ from glob import glob
 from shutil import (
     copyfile, rmtree
 )
+from helpers import pc
 
 
 
@@ -76,17 +77,21 @@ from shutil import (
 
 #     return (_list, _dict)
 
-def dom_color_data(images_format):
+def color_data(images_format, by_type='avg'):
     result = {}
     _dict = {}
     _list = []
     images = glob(images_format)
+    total = len(images)
 
     n = 0
     for img in images:
-        sys.stdout.write("\r {} of {}".format(n, len(images)))
+        sys.stdout.write("\r {} of {} ({}%)".format(n, total, pc(n, total)))
         sys.stdout.flush()
-        rgb_color = color.dominant(img)
+        if by_type == 'avg':
+            rgb_color = color.avg_color(img)
+        elif by_type == 'dom':
+            rgb_color = color.dominant(img)
         n += 1
 
         if not _dict.has_key("{}".format(rgb_color)):
@@ -94,16 +99,49 @@ def dom_color_data(images_format):
         else:
             _dict["{}".format(rgb_color)].append(img)
 
-    return ([], _dict)
+    return _dict
 
 
-def build_set(_list, _dict):
+def build_set(_dict, sort_by='hsv'):
     image_list = []
     _list = _dict.keys()
-    # _list.sort(key=lambda rgb: color.rgb_to_hsv(to_tuple(rgb))) # key=lambda rgb: lum(*rgb))
-    _list.sort( key=lambda rgb: color.luminance(*to_tuple(rgb))) # key=lambda rgb: lum(*rgb))
+    if sort_by == 'hls':
+        _list.sort(key=lambda rgb: color.rgb_to_hls(to_tuple(rgb)))
+    elif sort_by == 'hsl':
+        _list.sort(key=lambda rgb: color.rgb_to_hsl(to_tuple(rgb)))
+    elif sort_by == 'hsv':
+        _list.sort(key=lambda rgb: color.rgb_to_hsv(to_tuple(rgb)))
+    elif sort_by == 'lum':
+        _list.sort( key=lambda rgb: color.luminance(to_tuple(rgb)))
+
+    rgb_list = map(to_tuple, _list)
     for c_item in _list:
         image_list += _dict.get("{}".format(c_item))
+
+    return image_list
+
+
+def build_set_complementary(_dict, sort_by='hsv'):
+    image_list = []
+    _list = _dict.keys()
+    if sort_by == 'hls':
+        _list.sort(key=lambda rgb: color.rgb_to_hls(to_tuple(rgb)))
+    elif sort_by == 'hsl':
+        _list.sort(key=lambda rgb: color.rgb_to_hsl(to_tuple(rgb)))
+    elif sort_by == 'hsv':
+        _list.sort(key=lambda rgb: color.rgb_to_hsv(to_tuple(rgb)))
+    elif sort_by == 'lum':
+        _list.sort( key=lambda rgb: color.luminance(to_tuple(rgb)))
+
+    n = 0
+    for c_item in _list:
+        if n % 4 ==0:
+            complementary = color.complementary_rgb(to_tuple(c_item))
+            closest_color = color.find_closest(complementary, map(to_tuple, _list))
+            image_list += _dict.get("{}".format(str(closest_color)))
+
+        image_list += _dict.get("{}".format(c_item))
+        n += 1
 
     return image_list
 

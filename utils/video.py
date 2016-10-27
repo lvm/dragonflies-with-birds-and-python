@@ -13,22 +13,24 @@ def missing_parameters(help_msg):
     print "{}\n{}".format("Missing Parameters!", help_msg)
 
 
-# def to_images(video, images_format):
-#     """Converts a video to an image sequence.
-#     Use in conjunction with `--video` and `--image`
-#     {} --to-images --video video.mp4 --image img*.jpg
-#     """.format(__file)
-#     sp.call(['ffmpeg', '-y', '-i', video,
-#              '-q:v', '2', images_format
-#     ])
+def to_images(video, images_format):
+    """Converts a video to an image sequence.
+    Use in conjunction with `--video` and `--image`
+    {} --to-images --video video.mp4 --image img*.jpg
+    """.format(__file)
+    sp.call(['ffmpeg',
+             '-v', 'quiet',
+             '-y', '-i', video,
+             '-q:v', '2', images_format
+    ])
 
 
-def to_images(video, images_format, fps=12):
+def to_frames(video, images_format, fps=12):
     """Converts a video to an image sequence every N frames (default: 12).
     Use in conjunction with `--video` and `--image`
     {} --to-images --video video.mp4 --image img*.jpg
     """.format(__file)
-    cmd = 'ffmpeg -y -i {} -vf "select=not(mod(n\,{}))"'.format(video, fps)
+    cmd = 'ffmpeg -v quiet -y -i {} -vf "select=not(mod(n\,{}))"'.format(video, fps)
     cmd+= ' -vsync vfr -q:v 2 ' + images_format
 
     sp.call(shlex.split(cmd))
@@ -41,6 +43,7 @@ def to_video(images_format, video, fps=12):
     """.format(__file)
 
     sp.call(['ffmpeg',
+             '-v', 'quiet',
              '-framerate', str(fps),
              '-i', images_format,
              '-c:v', 'libx264',
@@ -58,11 +61,12 @@ def cut(start, duration, video_in, video_out):
     """.format(__file)
 
     sp.call(['ffmpeg',
-             '-i', video_in,
-             '-ss', start,
-             '-t', duration,
-             '-c', 'copy',
-             video_out or "cut_output.mp4"
+           '-v', 'quiet',
+           '-i', str(video_in),
+           '-ss', '{}'.format(start),
+           '-t', '{}'.format(duration),
+           '-c', 'copy',
+           video_out or "cut_output.mp4"
     ])
 
 
@@ -73,6 +77,7 @@ def cut_reencode(start, duration, video_in, video_out):
     """.format(__file)
 
     sp.call(['ffmpeg',
+             '-v', 'quiet',
              '-ss', start,
              '-i', video_in,
              '-t', duration,
@@ -91,12 +96,23 @@ def convert_framerate(video_in, fps):
     """.format(__file)
 
     sp.call(['ffmpeg',
+             '-v', 'quiet',
              '-i', video_in,
              '-qscale', '0',
              '-r', fps,
              '-y',
              "fps_{}".format(video_in)
     ])
+
+
+def concat(filelist, video_out):
+    """Concatenages a list of videos take from
+    a file list
+    {} --concatenate --file list.txt
+    """.format(__file)
+
+    cmd = "ffmpeg -v quiet -f concat -i {} -c copy {}".format(filelist, video_out)
+    sp.call(shlex.split(cmd))
 
 
 def length(video_in, show_sexagesimal=False):

@@ -82,7 +82,8 @@ def find_closest(color, color_list):
     return find_close(color, color_list)[0]
 
 
-def luminance(r,g, b):
+def luminance(rgb):
+    r, g, b = rgb
     return sqrt( .241 * r + .691 * g + .068 * b )
 
 

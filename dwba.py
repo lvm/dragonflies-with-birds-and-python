@@ -3,7 +3,7 @@
 
 from __future__ import print_function
 
-from lehmann import (
+from utils import (
     color, image, video
 )
 import os
@@ -39,19 +39,16 @@ def lehmannise(input_video, output_video, verbose):
                     os.path.join(FV_DIR, IMG_FORMAT))
 
     msg(">> get color from imgs", verbose)
-    #imgs_data = image.avg_color_data(os.path.join(FV_DIR, IMG_GLOB))
-    imgs_data = image.dom_color_data(os.path.join(FV_DIR, IMG_GLOB))
-
-    #save_palette(output_video+".txt", imgs_data)
+    imgs_data = image.color_data(os.path.join(FV_DIR, IMG_GLOB), 'avg')
 
     msg(">> build set of imgs", verbose)
-    imgs_list = image.build_set(*imgs_data)
+    imgs_list = image.build_set_complementary(imgs_data, '')
 
     msg(">> copy set of imgs", verbose)
     image.copy(imgs_list, TV_DIR, IMG_FORMAT)
 
     msg(">> imgs to video", verbose)
-    video.to_video(os.path.join(TV_DIR, IMG_FORMAT), output_video)
+    video.to_video(os.path.join(TV_DIR, IMG_FORMAT), output_video, 8)
 
     msg(">> cleaning cache dirs", verbose)
     image.clean_cache([FV_DIR, TV_DIR, CACHE_DIR, TEMP_DIR])
