@@ -105,13 +105,15 @@ def convert_framerate(video_in, fps):
     ])
 
 
-def concat(filelist, video_out):
+def concat(filelist, video_out, silent=True):
     """Concatenages a list of videos take from
     a file list
     {} --concatenate --file list.txt
     """.format(__file)
 
-    cmd = "ffmpeg -v quiet -f concat -i {} -c copy {}".format(filelist, video_out)
+    cmd = "ffmpeg {} -f concat -i {} -c copy {}".format(
+        '-v quiet' if silent else '',
+        filelist, video_out)
     sp.call(shlex.split(cmd))
 
 

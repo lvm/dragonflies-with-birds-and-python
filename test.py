@@ -38,21 +38,54 @@ videos = {
             'start':"00:07:10",
             'duration':"00:00:10"
         }
-    }
+    },
+    'mex':{
+        'list': 'mex_list',
+        'video_out': 'mex.mp4',
+        'a':{
+            'video_in':"./videos/Ketcham_Home_Movies_1949_Mexico.ogv",
+            'video_out':"./mex_a.ogv",
+            'start':"00:20:55",
+            'duration':"00:00:07"
+        },
+        'b':{
+            'video_in':"./videos/Ketcham_Home_Movies_1949_Mexico.ogv",
+            'video_out':"./mex_b.ogv",
+            'start':"00:02:45",
+            'duration':"00:00:10"
+        }
+    },
+    'car':{
+        'list': './car_list',
+        'video_out': 'car.ogv',
+        'a':{
+            'video_in':"./videos/Ketcham_Home_Movies_1949_Carico.ogv",
+            'video_out':"car_a.ogv",
+            'start':"00:20:55",
+            'duration':"00:00:07"
+        },
+        'b':{
+            'video_in':"./videos/Ketcham_Home_Movies_1949_Carico.ogv",
+            'video_out':"car_b.ogv",
+            'start':"00:42:00",
+            'duration':"00:00:20"
+        }
+    },
 }
 
 
-v = videos.get('fin')
-va = v.get('a')
-vb = v.get('b')
 
-video.cut(va.get('start'), va.get('duration'), va.get('video_in'), va.get('video_out'))
-video.cut(vb.get('start'), vb.get('duration'), vb.get('video_in'), vb.get('video_out'))
+def build_videos(videos, name):
+    v = videos.get(name)
+    cuts = filter(lambda k: k not in ['list', 'video_out'], v.keys())
 
-filelist = [
-    "file '{}'".format(va.get('video_out')),
-    "file '{}'".format(vb.get('video_out'))
-]
+    filelist = []
+    for cut in cuts:
+        vc = v.get(cut)
+        video.cut(vc.get('start'), vc.get('duration'), vc.get('video_in'), vc.get('video_out'))
+        filelist += ["file '{}'".format(vc.get('video_out'))]
 
-helpers.write_file(v.get('list'), filelist)
-video.concat(v.get('list'), v.get('video_out'))
+    helpers.write_file(v.get('list'), filelist + ["\n"])
+    video.concat(v.get('list'), v.get('video_out'), False)
+
+build_videos(videos, 'mex')
