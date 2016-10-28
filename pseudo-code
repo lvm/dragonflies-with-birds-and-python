@@ -1,0 +1,29 @@
+cut {
+    using "video_orig.mp4"
+    start "00:00:00"
+    during "00:00:10"
+    render "video_a.mp4"
+}
+
+cut {
+    using "video_orig.mp4"
+    start "00:00:20"
+    during "00:00:10"
+    render "video_b.mp4"
+}
+
+glue {
+     using "video_a.mp4"
+     using "video_b.mp4"
+     render "video_glued.mp4"
+}
+
+fx "lehmann" {
+     using "video_glued.mp4"
+     render "video_lehmann.mp4"
+}
+
+fx "arnold" {
+     using "video_lehmann.mp4"
+     render "final.mp4"
+}
