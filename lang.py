@@ -19,6 +19,41 @@ PARSEBLOCK_RE = "(?P<fn>\w+)\s\"(?P<param>.[^\"]*)\""
 PARSEBLOCK = re.compile(PARSEBLOCK_RE, re.DOTALL)
 
 
+ENV = {
+    'cut': dict(
+        type='action',
+        expects=['start', 'duration', 'render', 'using']
+    ),
+    'glue': dict(
+        type='action',
+        expects=['using', 'render']
+    ),
+    'apply': dict(
+        type='action',
+        expects=['using', 'fx', 'render']
+    ),
+    'using': dict(
+        type='var',
+        expects=[str]
+    ),
+    'start': dict(
+        type='var',
+        valid=[str, int, float]
+    ),
+    'during': dict(
+        type='var',
+        valid=[str, int, float]
+    ),
+    'fx': dict(
+        type='var',
+        expects=[str]
+    ),
+    'render': dict(
+        type='var',
+        expects=[str]
+    ),
+}
+
 def read(filename, verbose):
     "Reads the code and renders a video"
     program = " ".join(open(filename, 'r').readlines())
