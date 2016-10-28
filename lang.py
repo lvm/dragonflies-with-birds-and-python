@@ -38,11 +38,11 @@ ENV = {
     ),
     'start': dict(
         type='var',
-        valid=[str, int, float]
+        expects=[str, int, float]
     ),
     'during': dict(
         type='var',
-        valid=[str, int, float]
+        expects=[str, int, float]
     ),
     'fx': dict(
         type='var',
