@@ -30,7 +30,7 @@ def save_palette(filename, palette):
     f.close()
 
 
-def lehmannise(input_video, output_video, verbose):
+def lehmannise(input_video, output_video, verbose=False):
     msg(">> making cache dirs", verbose)
     image.make_cache([CACHE_DIR, FV_DIR, TV_DIR])
 
@@ -71,6 +71,6 @@ if __name__ == "__main__":
     if args.input_video:
         lehmannise(args.input_video,
                    args.output_video or "output.mp4",
-                   args.verbose)
+                   args.verbose or False)
     else:
         print("{} -h".format(__file))

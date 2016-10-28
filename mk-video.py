@@ -4,6 +4,8 @@
 from utils import (
     color, image, video, helpers
 )
+from lehmann import lehmannise
+from arnold import arnoldise
 
 
 videos = {
@@ -43,14 +45,14 @@ videos = {
         'list': 'mex_list',
         'video_out': 'mex.mp4',
         'a':{
-            'video_in':"./videos/Ketcham_Home_Movies_1949_Mexico.ogv",
-            'video_out':"./mex_a.ogv",
+            'video_in':"./videos/mexico.mp4",
+            'video_out':"./mex_a.mp4",
             'start':"00:20:55",
             'duration':"00:00:07"
         },
         'b':{
-            'video_in':"./videos/Ketcham_Home_Movies_1949_Mexico.ogv",
-            'video_out':"./mex_b.ogv",
+            'video_in':"./videos/mexico.mp4",
+            'video_out':"./mex_b.mp4",
             'start':"00:02:45",
             'duration':"00:00:10"
         }
@@ -61,7 +63,7 @@ videos = {
         'a':{
             'video_in':"./videos/mexico.mp4",
             'video_out':"./car_a.mp4",
-            'start':"00:02:45",
+            'start':"00:16:30",
             'duration':"00:00:10"
         },
         'b':{
@@ -71,8 +73,60 @@ videos = {
             'duration':"00:00:20"
         }
     },
+    'rac':{
+        'filelist': './rac_list',
+        'video_out': './rac.mp4',
+        'a':{
+            'video_in':"./videos/mexico.mp4",
+            'video_out':"./rac_a.mp4",
+            'start':"00:16:30",
+            'duration':"00:00:10"
+        },
+        'b':{
+            'video_in':"./videos/mexico.mp4",
+            'video_out':"./rac_b.mp4",
+            'start':"00:00:51",
+            'duration':"00:00:10"
+        }
+    },
+    'trees':{
+        'filelist': './trees_list',
+        'video_out': './trees.mp4',
+        'a':{
+            'video_in':"./videos/mexico.mp4",
+            'video_out':"./trees_a.mp4",
+            'start':"00:23:36",
+            'duration':"00:00:10"
+        },
+        'b':{
+            'video_in':"./videos/mexico.mp4",
+            'video_out':"./trees_b.mp4",
+            'start':"00:53:41",
+            'duration':"00:00:10"
+        }
+    },
+    'early':{
+        'filelist': './early_list',
+        'video_out': './early.mp4',
+        'a':{
+            'video_in':"./videos/Ketcham_Home_Movies_1936_Early_Days.mp4",
+            'video_out':"./early_a.mp4",
+            'start':"00:00:25",
+            'duration':"00:00:10"
+        },
+        'b':{
+            'video_in':"./videos/Ketcham_Home_Movies_1936_Early_Days.mp4",
+            'video_out':"./early_b.mp4",
+            'start':"00:01:30.500",
+            'duration':"00:00:10"
+        }
+    },
 }
 
+
+def sanitise(name):
+    ext = name[-4:]
+    return name.replace(ext, "").replace("/","_").replace(".","_") + ext
 
 
 def build_videos(videos, name):
@@ -87,5 +141,10 @@ def build_videos(videos, name):
 
     helpers.write_file(v.get('filelist'), filelist)
     video.concat(v.get('filelist'), v.get('video_out'), False)
+    lehmannise(v.get('video_out'), "lehmann_{}".format(sanitise(v.get('video_out'))))
+    arnoldise("lehmann_{}".format(sanitise(v.get('video_out'))),
+              "arnold_{}".format(sanitise(v.get('video_out'))))
 
-build_videos(videos, 'car')
+#build_videos(videos, 'mex')
+
+build_videos(videos, 'rac')

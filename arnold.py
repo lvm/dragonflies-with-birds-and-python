@@ -56,29 +56,30 @@ def test(input_video):
 
     sys.exit(0)
 
-def arnoldise(input_video, output_video, start, duration, verbose):
-    #video.cut(start, duration, input_video, output_video)
+def clean(filelist):
+    for filename in filelist:
+        try:
+            os.remove(filename)
+        except OSError:
+            pass
+
+
+def arnoldise(input_video, output_video):
     video_length = int(float(video.length(input_video)))
 
-    #vl = video_length
     filelist = []
     for x in range(video_length):
         t = x if x > 9 else "0{}".format(x)
-        # if random.randrange(1,10) % 2 == 1:
-        #     for n in range(10):
-        #         video.cut("00:00:{}".format(t), "00:00:00.500",
-        #                   input_video, "cut_s_{}_{}_{}".format(n,x,output_video))
-        #         filelist += ["file '{}'".format(
-        #             "cut_s_{}_{}_{}".format(n,x,output_video)
-        #         )]* random.randrange(2,10)
 
         video.cut("00:00:{}".format(t), "00:00:02",
                   input_video, "cut_{}_{}".format(x,output_video))
 
-        filelist += ["file 'cut_{}_{}'".format(x,output_video)] * random.randrange(2,10)
+        filelist += ["cut_{}_{}".format(x,output_video)] * random.randrange(2,10)
 
-    write_file("list_{}.txt".format(output_video), filelist)
-    video.concat("list_{}.txt".format(output_video), "final_{}".format(output_video))
+    write_file("list_{}.txt".format(output_video),
+               map(lambda f: "file '{}'".format(f), filelist))
+    video.concat("list_{}.txt".format(output_video), output_video)
+    clean(filelist + ["list_{}.txt".format(output_video)])
 
 
 if __name__ == "__main__":
@@ -93,17 +94,6 @@ if __name__ == "__main__":
                         type=str,
                         required=False,
                         help="Use this video as source. Default: output.mp4")
-    parser.add_argument('-s', '--start',
-                        type=str,
-                        required=False,
-                        help="A video position. eg: hh:mm:ss. Default: 00:00:00")
-    parser.add_argument('-d', '--duration',
-                        type=str,
-                        required=False,
-                        help="A time frame. eg: hh:mm:ss. Default: 00:00:10")
-    parser.add_argument('-V', '--verbose',
-                        action="store_true",
-                        help="Show stdout messages")
 
     args = parser.parse_args()
 
@@ -111,9 +101,6 @@ if __name__ == "__main__":
         test(args.input_video)
     if args.input_video:
         arnoldise(args.input_video,
-                  args.output_video or "output.mp4",
-                  args.start or "00:00:00",
-                  args.duration or "00:00:10",
-                  args.verbose)
+                  args.output_video or "output.mp4")
     else:
         print("{} -h".format(__file))
