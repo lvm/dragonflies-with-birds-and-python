@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
+
 def write_file(filename, content):
     f = open(filename, 'w')
     f.write("\n".join(content))

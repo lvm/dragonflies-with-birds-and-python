@@ -153,7 +153,7 @@ def build_videos(videos, name):
     video.concat(v.get('filelist'), v.get('video_out'), False)
     lehmannise(v.get('video_out'), "lehmann_{}".format(sanitise(v.get('video_out'))))
     arnoldise("lehmann_{}".format(sanitise(v.get('video_out'))),
-              "arnold_{}".format(sanitise(v.get('video_out'))))
+              "render_{}".format(sanitise(v.get('video_out'))))
 
     ##
     # TODO: FIX VIDEO NAME BC THIS IS BANANAS.
