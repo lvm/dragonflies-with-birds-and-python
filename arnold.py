@@ -37,7 +37,7 @@ def arnoldise(input_video, output_video):
     for x in range(video_length):
         t = x if x > 9 else "0{}".format(x)
 
-        video.cut("00:00:{}".format(t), "00:00:02",
+        video.cut("00:00:{}".format(t), "00:00:05",
                   input_video, "cut_{}_{}".format(x,output_video))
 
         filelist += ["cut_{}_{}".format(x,output_video)] * random.randrange(2,10)
@@ -60,8 +60,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    if args.test:
-        test(args.input_video)
     if args.input_video:
         arnoldise(args.input_video,
                   args.output_video or "output.mp4")

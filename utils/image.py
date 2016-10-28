@@ -121,7 +121,7 @@ def build_set(_dict, sort_by='hsv'):
     return image_list
 
 
-def build_set_complementary(_dict, sort_by='hsv'):
+def build_set_complementary(_dict, sort_by='hsv', every=4):
     image_list = []
     _list = _dict.keys()
     if sort_by == 'hls':
@@ -135,7 +135,7 @@ def build_set_complementary(_dict, sort_by='hsv'):
 
     n = 0
     for c_item in _list:
-        if n % 4 ==0:
+        if n % every == 0:
             complementary = color.complementary_rgb(to_tuple(c_item))
             closest_color = color.find_closest(complementary, map(to_tuple, _list))
             image_list += _dict.get("{}".format(str(closest_color)))

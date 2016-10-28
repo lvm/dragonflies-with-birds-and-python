@@ -18,12 +18,15 @@ glue {
      render "video_glued.mp4"
 }
 
-fx "lehmann" {
+apply {
      using "video_glued.mp4"
+     fx "lehmann"
      render "video_lehmann.mp4"
 }
 
-fx "arnold" {
+
+apply {
      using "video_lehmann.mp4"
+     fx "lehmann"
      render "final.mp4"
 }

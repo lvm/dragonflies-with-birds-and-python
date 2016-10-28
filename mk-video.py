@@ -15,8 +15,8 @@ import argparse
 __file = os.path.basename(__file__)
 videos = {
     'rg':{
-        'list': 'rg_list',
-        'video_out': 'rg.mp4',
+        'list': './rg_list',
+        'video_out': './rg.mp4',
         'a':{
             'video_in':"./videos/0781.mp4",
             'video_out':"./red.mp4",
@@ -32,8 +32,8 @@ videos = {
     },
 
     'fin':{
-        'list': 'fin_list',
-        'video_out': 'fin.mp4',
+        'list': './fin_list',
+        'video_out': './fin.mp4',
         'a':{
             'video_in':"./videos/0781.mp4",
             'video_out':"./fin_a.mp4",
@@ -112,6 +112,7 @@ videos = {
             'duration':"00:00:10"
         }
     },
+
     'early':{
         'filelist': './early_list',
         'video_out': './early.mp4',
@@ -128,6 +129,109 @@ videos = {
             'duration':"00:00:10"
         }
     },
+
+    'west':{
+        'filelist': './west_list',
+        'video_out': './west.mp4',
+        'a':{
+            'video_in':"./videos/western.mp4",
+            'video_out':"./west_a.mp4",
+            'start':"00:30:07",
+            'duration':"00:00:10"
+        },
+        'b':{
+            'video_in':"./videos/western.mp4",
+            'video_out':"./west_b.mp4",
+            'start':"00:11:22",
+            'duration':"00:00:08"
+        }
+    },
+    
+    'crash':{
+        'filelist': './crash_list',
+        'video_out': './crash.mp4',
+        'a':{
+            'video_in':"./videos/western.mp4",
+            'video_out':"./crash_a.mp4",
+            'start':"00:01:35",
+            'duration':"00:00:15"
+        },
+    },
+    
+    'hsarc':{
+        'filelist': './hsarc_list',
+        'video_out': './hsarc.mp4',
+        'a':{
+            'video_in':"./videos/western.mp4",
+            'video_out':"./hsarc_a.mp4",
+            'start':"00:01:35",
+            'duration':"00:00:20"
+        },
+        'b':{
+            'video_in':"./videos/western.mp4",
+            'video_out':"./hsarc_b.mp4",
+            'start':"00:01:35",
+            'duration':"00:00:20"
+        },
+    },
+
+    'dev':{
+        'filelist': './dev_list',
+        'video_out': './dev.mp4',
+        'a':{
+            'video_in':"./videos/western.mp4",
+            'video_out':"./dev_a.mp4",
+            'start':"00:08:30",
+            'duration':"00:00:10"
+        },
+        'b':{
+            'video_in':"./videos/western.mp4",
+            'video_out':"./dev_b.mp4",
+            'start':"00:15:05",
+            'duration':"00:00:10"
+        },
+        'c':{
+            'video_in':"./videos/western.mp4",
+            'video_out':"./dev_c.mp4",
+            'start':"00:31:20",
+            'duration':"00:00:10"
+        },
+    },
+    
+    'pool':{
+        'filelist': './pool_list',
+        'video_out': './pool.mp4',
+        'c':{
+            'video_in':"./videos/western.mp4",
+            'video_out':"./pool_c.mp4",
+            'start':"00:31:20",
+            'duration':"00:00:10"
+        },
+        'd':{
+            'video_in':"./videos/western.mp4",
+            'video_out':"./pool_d.mp4",
+            'start':"00:32:12",
+            'duration':"00:00:10"
+        },
+    },
+
+    'water':{
+        'filelist': './water_list',
+        'video_out': './water.mp4',
+        'c':{
+            'video_in':"./videos/western.mp4",
+            'video_out':"./water_c.mp4",
+            'start':"00:31:20",
+            'duration':"00:00:10"
+        },
+        'd':{
+            'video_in':"./videos/western.mp4",
+            'video_out':"./water_d.mp4",
+            'start':"00:35:41",
+            'duration':"00:00:10"
+        },
+    },
+
 }
 
 

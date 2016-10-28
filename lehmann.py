@@ -42,7 +42,7 @@ def lehmannise(input_video, output_video, verbose=False):
     imgs_data = image.color_data(os.path.join(FV_DIR, IMG_GLOB), 'avg')
 
     msg(">> build set of imgs", verbose)
-    imgs_list = image.build_set_complementary(imgs_data, '')
+    imgs_list = image.build_set_complementary(imgs_data, '', 4)
 
     msg(">> copy set of imgs", verbose)
     image.copy(imgs_list, TV_DIR, IMG_FORMAT)
