@@ -1,13 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
 from utils import (
     color, image, video, helpers
 )
 from lehmann import lehmannise
 from arnold import arnoldise
 
+import os
+import sys
+import argparse
 
+__file = os.path.basename(__file__)
 videos = {
     'rg':{
         'list': 'rg_list',
@@ -25,6 +30,7 @@ videos = {
             'duration':"00:00:10"
         }
     },
+
     'fin':{
         'list': 'fin_list',
         'video_out': 'fin.mp4',
@@ -41,6 +47,7 @@ videos = {
             'duration':"00:00:10"
         }
     },
+
     'mex':{
         'list': 'mex_list',
         'video_out': 'mex.mp4',
@@ -136,15 +143,43 @@ def build_videos(videos, name):
     filelist = []
     for cut in cuts:
         vc = v.get(cut)
-        video.cut(vc.get('start'), vc.get('duration'), vc.get('video_in'), vc.get('video_out'))
-        filelist += ["file '{}'".format(vc.get('video_out'))]
+        if type(vc) != str:
+            video.cut(vc.get('start'), vc.get('duration'),
+                      vc.get('video_in'), vc.get('video_out'))
+            filelist += [vc.get('video_out')]
 
-    helpers.write_file(v.get('filelist'), filelist)
+    helpers.write_file(v.get('filelist'),
+                       map(lambda f: "file '{}'".format(f), filelist))
     video.concat(v.get('filelist'), v.get('video_out'), False)
     lehmannise(v.get('video_out'), "lehmann_{}".format(sanitise(v.get('video_out'))))
     arnoldise("lehmann_{}".format(sanitise(v.get('video_out'))),
               "arnold_{}".format(sanitise(v.get('video_out'))))
 
-#build_videos(videos, 'mex')
+    ##
+    # TODO: FIX VIDEO NAME BC THIS IS BANANAS.
+    ##
+    helpers.clean(filelist +[
+        v.get('filelist'),
+        "lehmann_{}".format(sanitise(v.get('video_out'))),
+        v.get('video_out')
+    ])
 
-build_videos(videos, 'rac')
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-l', '--list',
+                        action="store_true",
+                        help="List video-sets.")
+    parser.add_argument('-v', '--video',
+                        type=str,
+                        required=False,
+                        help="Use video-set")
+
+    args = parser.parse_args()
+
+    if args.list:
+        print(videos.keys())
+    elif args.video:
+        build_videos(videos, args.video)
+    else:
+        print("{} -h".format(__file))
