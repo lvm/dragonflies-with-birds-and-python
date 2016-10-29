@@ -13,6 +13,10 @@ def missing_parameters(help_msg):
     print "{}\n{}".format("Missing Parameters!", help_msg)
 
 
+###
+# conversions
+#
+
 def to_images(video, images_format):
     """Converts a video to an image sequence.
     Use in conjunction with `--video` and `--image`
@@ -53,6 +57,27 @@ def to_video(images_format, video, fps=12):
     ])
 
 
+###
+# operations
+#
+
+def length(video_in, show_sexagesimal=False):
+    """Converts the framerate of a video.
+    Use in conjunction with `--video` and `--fps`.
+    {} --convert-framerate --video video.mp4 --fps 12
+    """.format(__file)
+
+    cmd = 'ffprobe -v quiet -show_format {} -i {}'.format(
+        '-sexagesimal' if show_sexagesimal else '',
+        video_in)
+
+    duration = 'duration='
+    output = sp.check_output(shlex.split(cmd))
+    return map(lambda line: line.replace(duration, ''),
+               filter(lambda line: line.startswith(duration),
+                      output.split("\n")))[0]
+
+
 def cut(start, duration, video_in, video_out):
     """Cuts a portion of a video.
     Use in conjunction with `--video`, `--start`, `--duration` and (optional)`--video-out`.
@@ -89,22 +114,6 @@ def cut_reencode(start, duration, video_in, video_out):
     ])
 
 
-def convert_framerate(video_in, fps):
-    """Converts the framerate of a video.
-    Use in conjunction with `--video` and `--fps`.
-    {} --convert-framerate --video video.mp4 --fps 12
-    """.format(__file)
-
-    sp.call(['ffmpeg',
-             '-v', 'quiet',
-             '-i', video_in,
-             '-qscale', '0',
-             '-r', fps,
-             '-y',
-             "fps_{}".format(video_in)
-    ])
-
-
 def concat(filelist, video_out, silent=True):
     """Concatenages a list of videos take from
     a file list
@@ -117,21 +126,175 @@ def concat(filelist, video_out, silent=True):
     sp.call(shlex.split(cmd))
 
 
-def length(video_in, show_sexagesimal=False):
+def convert_framerate(fps, video_in, video_out):
     """Converts the framerate of a video.
     Use in conjunction with `--video` and `--fps`.
     {} --convert-framerate --video video.mp4 --fps 12
     """.format(__file)
 
-    cmd = 'ffprobe -v quiet -show_format {} -i {}'.format(
-        '-sexagesimal' if show_sexagesimal else '',
-        video_in)
+    sp.call(['ffmpeg',
+             '-v', 'quiet',
+             '-i', video_in,
+             '-qscale', '0',
+             '-r', fps,
+             '-y',
+             video_out or "cut_output.mp4"
+    ])
 
-    duration = 'duration='
-    output = sp.check_output(shlex.split(cmd))
-    return map(lambda line: line.replace(duration, ''),
-               filter(lambda line: line.startswith(duration),
-                      output.split("\n")))[0]
+
+###
+# effects
+#
+
+
+def effect(fx, video_in, video_out, silent=True):
+
+    if type(video_in) in [list, tuple]:
+        video_in = " ".join(map(lambda v: '-i {}'.format(v), video_in))
+    else:
+        video_in = '-i {}'.format(video_in)
+
+    """Applies a given `fx` to a video"""
+    cmd = 'ffmpeg {} {} -vf "{}" {}'.format(
+        '-v quiet' if silent else '',
+        video_in, fx, video_out)
+
+    sp.call(shlex.split(cmd))
+
+
+def mirror(video_in, video_out, silent=True):
+    """Applies a `mirror effect` to a video"""
+    effect("crop=iw/2:ih:0:0,split[left][tmp];[tmp]hflip[right];[left][right] hstack",
+           video_in, video_out, silent)
+
+
+def blur(value, video_in, video_out, silent=True):
+    """Applies a `mirror effect` to a video"""
+    effect("boxblur={}:1".format(value),
+           video_in, video_out, silent)
+
+
+def greyscale(video_in, video_out, silent=True):
+    """Converts a video to b/w"""
+    effect("colorchannelmixer=.3:.4:.3:0:.3:.4:.3:0:.3:.4:.3",
+           video_in, video_out, silent)
+
+
+def sepia(video_in, video_out, silent=True):
+    """Converts a video to `sepia`"""
+    effect("colorchannelmixer=.393:.769:.189:0:.349:.686:.168:0:.272:.534:.131",
+           video_in, video_out, silent)
+
+
+def vintage(video_in, video_out, silent=True):
+    """Gives a `vintage` look to a video"""
+    effect("curves=vintage",
+           video_in, video_out, silent)
+
+
+def wires(video_in, video_out, silent=True):
+    """Gives a `wires` look to a video"""
+    effect("edgedetect=low=0.1:high=0.4",
+           video_in, video_out, silent)
+
+
+def paint(video_in, video_out, silent=True):
+    """Gives a `paint` look to a video"""
+    effect("edgedetect=mode=colormix:high=0",
+           video_in, video_out, silent)
+
+
+def negate(video_in, video_out, silent=True):
+    """Inverts the colors in a video"""
+    effect("lutrgb='r=negval:g=negval:b=negval'",
+           video_in, video_out, silent)
+
+
+def flip(video_in, video_out, silent=True):
+    """Flips horizontally a video"""
+    effect("hflip",
+           video_in, video_out, silent)
+
+
+def vflip(video_in, video_out, silent=True):
+    """Flips vertically a video"""
+    effect("vflip",
+           video_in, video_out, silent)
+
+
+def magnify(value, video_in, video_out, silent=True):
+    """Magnifies a video"""
+    effect("hqx={}".format(value),
+           video_in, video_out, silent)
+
+
+def kern(video_in, video_out, silent=True):
+    """kernel deinterling"""
+    effect("kerndeint=map=1",
+           video_in, video_out, silent)
+
+
+def burning(video_in, video_out, silent=True):
+    """Burning effect"""
+    effect("lutyuv='y=2*val'",
+           video_in, video_out, silent)
+
+
+def negalum(video_in, video_out, silent=True):
+    """Negate Luminance effect"""
+    effect("lutyuv=y=negval",
+           video_in, video_out, silent)
+
+
+def noise(video_in, video_out, silent=True):
+    """Noise effect"""
+    effect("noise=alls=20:allf=t+u",
+           video_in, video_out, silent)
+
+
+def to_palette(video_in, image_out, silent=True):
+    """Saves a palette from a video"""
+    effect("palettegen",
+           video_in, image_out, silent)
+
+
+def from_palette(palette_in, video_in, video_out, silent=True):
+    """Saves a palette from a video"""
+    effect("palettegen",
+           [palette_in, video_in], video_out, silent)
+
+
+def random(frames, video_in, video_out, silent=True):
+    """Randomises frames of a video"""
+    effect("random={}:-1".format(frames),
+           video_in, video_out, silent)
+
+
+def reverse(video_in, video_out, silent=True):
+    """Randomises frames of a video"""
+    effect("reverse",
+           video_in, video_out, silent)
+
+
+def shuffleframes(video_in, video_out, silent=True):
+    """Shuffles frames of a video"""
+    #effect("shuffleframes=...",
+    #       video_in, video_out, silent)
+
+
+def transpose(video_in, video_out, silent=True):
+    """Shuffles frames of a video"""
+    effect("transpose=1:portrait",
+           video_in, video_out, silent)
+
+
+def vignette(video_in, video_out, silent=True):
+    """Shuffles frames of a video"""
+    effect("vignette='PI/4+random(1)*PI/50':eval=frame",
+           video_in, video_out, silent)
+
+
+    
 
 
 if __name__ == '__main__':
@@ -201,3 +364,5 @@ if __name__ == '__main__':
                 missing_parameters(convert_framerate.__doc__)
         else:
             print "{} -h".format(__file)
+
+            

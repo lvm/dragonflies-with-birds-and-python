@@ -24,9 +24,8 @@ apply {
      render "video_lehmann.mp4"
 }
 
-
 apply {
      using "video_lehmann.mp4"
-     fx "lehmann"
+     fx "arnold"
      render "final.mp4"
 }
