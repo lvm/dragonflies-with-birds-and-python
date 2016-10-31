@@ -1,16 +1,8 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
-import os
-import shlex
-import argparse
-import subprocess as sp
 from utils import ffmpeg
 
-__file = os.path.basename(__file__)
-
-
-def apply(fx, video_in, video_out, silent=True):
+def apply(fx, video_in, video_out, verbose=False):
     """Applies a given `fx` to a video"""
     if type(video_in) in [list, tuple]:
         video_in = " ".join(map(lambda v: '-i {}'.format(v), video_in))
@@ -20,11 +12,8 @@ def apply(fx, video_in, video_out, silent=True):
     if type(fx) in [list, tuple]:
         fx = ",".join(fx) if len(fx) > 1 else str(fx[0])
 
-    cmd = 'ffmpeg {} {} -vf "{}" {}'.format(
-        '-v quiet' if silent else '',
-        video_in, fx, video_out)
-
-    sp.call(shlex.split(cmd))
+    args = '{} -vf "{}" {}'.format(video_in, fx, video_out)
+    ffmpeg(args, cmd)
 
 
 ##
