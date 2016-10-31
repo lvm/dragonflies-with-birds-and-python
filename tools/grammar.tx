@@ -1,3 +1,7 @@
+Program:
+	actions*=VideoActions
+;
+
 VideoActions:
 	action=ActionType
 	"{"
@@ -30,7 +34,7 @@ Duration:
 ;
 
 Fx:
-        'fx' fx+=STRING
+        'fx' list+=STRING
 ;
 
 Comment:

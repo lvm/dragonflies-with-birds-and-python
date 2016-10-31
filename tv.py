@@ -2,47 +2,57 @@
 
 import os
 import argparse
-from utils import video
+from tools import video
 from textx.metamodel import metamodel_from_file
 
 TV = metamodel_from_file('tools/grammar.tx', ignore_case=True)
 
-
 class Video(object):
     def __init__(self, name):
         self.name = name
-        self.tmpfile = "{}-{}".format(tempfile, name)
+        self.actions = {
+            'cut': ['start', 'duration', 'render', 'using'],
+            'glue': ['using', 'render'],
+            'apply': ['using', 'fx', 'render']
+        }
 
 
-    def cut(self, video_in, video_out, start, duration, verbose):
-        video.cut(video_in, video_out, start, duration, verbose)
+    def complies(self, action, args):
+        "Just tries to find the expected words in the codeblock"
+        expects = self.actions.get(action)
+        does = filter(lambda is_valid: is_valid,
+                      map(lambda e: e in args.keys(), expects))
+
+        return len(does) == len(expects)
 
 
-    def glue(self, video_in, video_out):
-        video.cut(video_in, video_out, start, duration, verbose)
-        pass
+    def action(self, action, args, verbose=False):
+        if self.complies(action, args):
+            if action == "cut":
+                video.utils.cut(args.get('using').video, args.get('render').video,
+                                args.get('start').time, args.get('duration').time,
+                                verbose)
 
+            if action == "glue":
+                video.utils.glue(args.get('using').video, args.get('render').video,
+                                 verbose)
 
-    def apply(self):
-        pass
+            if action == "apply":
+                video.fx.apply(
+                    map(video.fx.from_string, args.get('fx').list),
+                    args.get('using').video, args.get('render').video,
+                    verbose
+                )
 
-
-    def action(self, action, codeblock, verbose):
-        if action == "cut":
-            pass
-
-        if action == "glue":
-            pass
-
-        if action == "apply":
-            pass
-
+            return args.get('render').video
+        else:
+             return None
 
 
 def read(filename, verbose):
     if os.path.isfile(filename):
         _model = TV.model_from_file(filename)
-        v_name = os.path.basename(os.path.splitext(filename))[0]
+        v_name = os.path.splitext(os.path.basename(filename))[0]
         video = Video(v_name)
 
         for act in _model.actions:

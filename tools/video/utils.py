@@ -76,6 +76,9 @@ def length(video_in, show_sexagesimal=False, verbose=False):
 
 def cut(video_in, video_out, start, duration, verbose=False):
     "Cuts a portion of a video."
+    if type(video_in) in [list, tuple]:
+        video_in = video_in[0]
+
     args = '-i {} -ss "{}" -t "{}" -c copy {}'.format(
         video_in, start, duration, video_out)
     ffmpeg(args, verbose)

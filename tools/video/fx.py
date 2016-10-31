@@ -2,6 +2,14 @@
 
 from utils import ffmpeg
 
+__VARS = vars()
+
+def from_string(fx):
+    if fx and \
+       fx in filter(lambda v: not v.startswith("__"), __VARS.keys()):
+        return __VARS.get(fx)
+
+
 def apply(fx, video_in, video_out, verbose=False):
     """Applies a given `fx` to a video"""
     if type(video_in) in [list, tuple]:
@@ -13,8 +21,7 @@ def apply(fx, video_in, video_out, verbose=False):
         fx = ",".join(fx) if len(fx) > 1 else str(fx[0])
 
     args = '{} -vf "{}" {}'.format(video_in, fx, video_out)
-    ffmpeg(args, cmd)
-
+    ffmpeg(args, verbose)
 
 ##
 # w/o args
