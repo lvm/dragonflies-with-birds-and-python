@@ -1,25 +1,11 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#from __future__ import print_function
 
-import random
-from utils import (
-    color, image, video, helpers
-)
 import os
-import sys
 import argparse
-
-import time
-import datetime as dt
-
-from lehmann import lehmannise
-from arnold import arnoldise
-
+from utils import video
 from textx.metamodel import metamodel_from_file
 
-
-TV = metamodel_from_file('utils/grammar.tx', ignore_case=True)
+TV = metamodel_from_file('tools/grammar.tx', ignore_case=True)
 
 
 class Video(object):

@@ -6,6 +6,9 @@ import shlex
 import argparse
 import tempfile
 import subprocess as sp
+from ..helpers import (
+    write_file, clean
+)
 
 
 def ffmpeg(args, verbose=False, check_output=False):
@@ -14,7 +17,7 @@ def ffmpeg(args, verbose=False, check_output=False):
         '' if verbose else '-v quiet',
         args
     )
-    if check_putput:
+    if check_output:
         sp.check_output(shlex.split(cmd))
     else:
         sp.call(shlex.split(cmd))
@@ -85,25 +88,16 @@ def cut_reencode(video_in, video_out, start, duration, verbose=False):
     ffmpeg(args, verbose)
 
 
-def glue(video_in, video_out, verbose=False):
+def glue(videos_in, video_out, verbose=False):
     "Glues a list of videos in a single one"
-    if type(video_in) not in [list, tuple]:
+    if type(videos_in) not in [list, tuple]:
         return # must be a list or a tuple, silly.
-
-    filelist = tempfile.mktemp()
-    filecontent = "\n".join(map(lambda v: "file '{}'".format(v), video_in))
-    f = open(filelist, 'w')
-    f.write(filecontent)
-    f.close()
-
-    args = "-f concat -safe 0 -i {} -c copy {}".format(filelist, video_out)
+    tmpfile = tempfile.mktemp()
+    content = map(lambda v: "file '{}'".format(os.path.abspath(v)), videos_in)
+    args = "-f concat -safe 0 -i {} -c copy {}".format(tmpfile, video_out)
+    write_file(tmpfile, content)
     ffmpeg(args, verbose)
-
-    try:
-        os.remove(filelist)
-    except:
-        # no exceptions for now.
-        pass
+    clean(tmpfile)
 
 
 def convert_framerate(video_in, video_out, fps=12, verbose=False):
