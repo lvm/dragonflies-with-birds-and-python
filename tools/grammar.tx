@@ -1,0 +1,38 @@
+VideoActions:
+	action=ActionType
+	"{"
+        using=Using
+        start=Start?
+        duration=Duration?
+        fx=Fx?
+        render=Render
+	"}"
+;
+
+ActionType:
+	"cut"|"glue"|"apply"
+;
+
+Using:
+        'using' video+=STRING
+;
+
+Render:
+        'render' video=STRING
+;
+
+Start:
+        'start' time=STRING?
+;
+
+Duration:
+        'duration' time=STRING?
+;
+
+Fx:
+        'fx' fx+=STRING
+;
+
+Comment:
+  /\/\/.*$/
+;
