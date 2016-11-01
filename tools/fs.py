@@ -22,7 +22,7 @@ def copy(image_list, image_dest, image_format):
 
 
 def rm_dir(dirs):
-    if type(dirs) in [list, tuple]:
+    if isinstance(dirs, (list, tuple):
         map(rm_dir, dirs)
     else:
         try:
@@ -32,7 +32,7 @@ def rm_dir(dirs):
 
 
 def mk_dir(dirs):
-    if type(dirs) in [list, tuple]:
+    if isinstance(dirs, (list, tuple)):
         map(mk_dir, dirs)
     else:
         try:

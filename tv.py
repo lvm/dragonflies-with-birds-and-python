@@ -28,6 +28,7 @@ class Video(object):
 
     def action(self, action, args, verbose=False):
         if self.complies(action, args):
+
             if action == "cut":
                 video.utils.cut(args.get('using').video, args.get('render').video,
                                 args.get('start').time, args.get('duration').time,

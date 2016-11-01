@@ -81,7 +81,7 @@ def length(video_in, show_sexagesimal=False, verbose=False):
 
 def cut(video_in, video_out, start, duration, verbose=False):
     "Cuts a portion of a video."
-    if type(video_in) in [list, tuple]:
+    if isinstance(video_in, (list, tuple)):
         video_in = video_in[0]
 
     args = '-i {} -ss "{}" -t "{}" -c copy -an {}'.format(
@@ -91,7 +91,7 @@ def cut(video_in, video_out, start, duration, verbose=False):
 
 def cut_reencode(video_in, video_out, start, duration, verbose=False):
     "Cuts a portion and re-encodes a video"
-    if type(video_in) in [list, tuple]:
+    if isinstance(video_in, (list, tuple)):
         video_in = video_in[0]
 
     args = '-i {} -ss "{}" -t "{}" -c:v libx264 -c:a aac -strict experimental -b:a 128k {}'.format(
@@ -101,7 +101,7 @@ def cut_reencode(video_in, video_out, start, duration, verbose=False):
 
 def glue(videos_in, video_out, verbose=False):
     "Glues a list of videos in a single one"
-    if type(videos_in) not in [list, tuple]:
+    if not isinstance(videos_in, (list, tuple)):
         return # must be a list or a tuple, silly.
 
     tmpfile = tempfile.mktemp()
