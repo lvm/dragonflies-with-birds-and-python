@@ -1,10 +1,7 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-from __future__ import print_function
 
 import random
-from utils import (
+from tools import (
     color, image, video, helpers
 )
 import os
@@ -30,22 +27,24 @@ def msg(msg, verbose=False):
         print ( msg )
 
 
-def arnoldise(input_video, output_video):
-    video_length = int(float(video.length(input_video)))
-
+def arnoldise(input_video, output_video, verbose=False):
+    video_length = int(float(video.utils.length(input_video, False, verbose)))
     filelist = []
     for x in range(video_length):
         t = x if x > 9 else "0{}".format(x)
 
-        video.cut("00:00:{}".format(t), "00:00:05",
-                  input_video, "cut_{}_{}".format(x,output_video))
+        video.utils.cut(input_video, "./cut_{}_{}".format(x,output_video),
+                        "00:00:{}".format(t), "00:00:05",
+                        verbose)
+        video.fx.apply(
+           map(video.fx.from_string, ["slower"]),
+           "./cut_{}_{}".format(x,output_video), "./cut_{}_{}".format(x,output_video),
+           verbose)
 
         filelist += ["cut_{}_{}".format(x,output_video)] * random.randrange(2,10)
 
-    helpers.write_file("list_{}.txt".format(output_video),
-               map(lambda f: "file '{}'".format(f), filelist))
-    video.concat("list_{}.txt".format(output_video), output_video)
-    helpers.clean(filelist + ["list_{}.txt".format(output_video)])
+    video.utils.glue(filelist, output_video, verbose)
+    helpers.clean(filelist)
 
 
 if __name__ == "__main__":
@@ -57,11 +56,16 @@ if __name__ == "__main__":
                         type=str,
                         required=False,
                         help="Use this video as source. Default: output.mp4")
+    parser.add_argument('-V', '--verbose',
+                        action="store_true",
+                        help="Show stdout messages")
+
 
     args = parser.parse_args()
 
     if args.input_video:
         arnoldise(args.input_video,
-                  args.output_video or "output.mp4")
+                  args.output_video or "output.mp4",
+                  args.verbose or False)
     else:
         print("{} -h".format(__file))

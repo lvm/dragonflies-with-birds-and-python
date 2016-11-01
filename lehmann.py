@@ -3,8 +3,8 @@
 
 from __future__ import print_function
 
-from utils import (
-    color, image, video
+from tools import (
+    image, video, fs
 )
 import os
 import argparse
@@ -32,26 +32,26 @@ def save_palette(filename, palette):
 
 def lehmannise(input_video, output_video, verbose=False):
     msg(">> making cache dirs", verbose)
-    image.make_cache([CACHE_DIR, FV_DIR, TV_DIR])
+    fs.mk_dir([CACHE_DIR, FV_DIR, TV_DIR])
 
     msg(">> video to imgs", verbose)
-    video.to_images(input_video,
-                    os.path.join(FV_DIR, IMG_FORMAT))
+    video.utils.to_images(input_video,
+                          os.path.join(FV_DIR, IMG_FORMAT), verbose)
 
     msg(">> get color from imgs", verbose)
-    imgs_data = image.color_data(os.path.join(FV_DIR, IMG_GLOB), 'avg')
+    imgs_data = image.color_data(os.path.join(FV_DIR, IMG_GLOB), 'avg', verbose)
 
     msg(">> build set of imgs", verbose)
-    imgs_list = image.build_set_complementary(imgs_data, '', 4)
+    imgs_list = image.build_set_complementary(imgs_data, '', 8)
 
     msg(">> copy set of imgs", verbose)
-    image.copy(imgs_list, TV_DIR, IMG_FORMAT)
+    fs.copy(imgs_list, TV_DIR, IMG_FORMAT)
 
     msg(">> imgs to video", verbose)
-    video.to_video(os.path.join(TV_DIR, IMG_FORMAT), output_video, 8)
+    video.utils.to_video(output_video, os.path.join(TV_DIR, IMG_FORMAT), 12, verbose)
 
     msg(">> cleaning cache dirs", verbose)
-    image.clean_cache([FV_DIR, TV_DIR, CACHE_DIR, TEMP_DIR])
+    fs.rm_dir([FV_DIR, TV_DIR, CACHE_DIR, TEMP_DIR])
 
 
 if __name__ == "__main__":

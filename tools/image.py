@@ -1,14 +1,9 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
-import os
 import sys
 import color
 from ast import literal_eval as to_tuple
 from glob import glob
-from shutil import (
-    copyfile, rmtree
-)
 from helpers import pc
 
 
@@ -77,17 +72,18 @@ from helpers import pc
 
 #     return (_list, _dict)
 
-def color_data(images_format, by_type='avg'):
+def color_data(images_path, by_type='avg', verbose=False):
     result = {}
     _dict = {}
     _list = []
-    images = glob(images_format)
+    images = glob(images_path)
     total = len(images)
 
     n = 0
     for img in images:
         sys.stdout.write("\r {} of {} ({}%)".format(n, total, pc(n, total)))
         sys.stdout.flush()
+
         if by_type == 'avg':
             rgb_color = color.avg_color(img)
         elif by_type == 'dom':
@@ -95,9 +91,9 @@ def color_data(images_format, by_type='avg'):
         n += 1
 
         if not _dict.has_key("{}".format(rgb_color)):
-            _dict["{}".format(rgb_color)] = [img]
-        else:
-            _dict["{}".format(rgb_color)].append(img)
+            _dict["{}".format(rgb_color)] = []
+
+        _dict["{}".format(rgb_color)].append(img)
 
     return _dict
 
@@ -144,23 +140,3 @@ def build_set_complementary(_dict, sort_by='hsv', every=4):
         n += 1
 
     return image_list
-
-
-def copy(image_list, image_dest, image_format):
-    img_n=0
-    for img in image_list:
-        if os.path.isfile(img):
-            copyfile(img,
-                     os.path.join(image_dest,
-                                  image_format % img_n))
-        img_n += 1
-
-    return None
-
-
-def clean_cache(cache_dirs):
-    map(rmtree, cache_dirs)
-
-
-def make_cache(cache_dirs):
-    map(os.makedirs, cache_dirs)

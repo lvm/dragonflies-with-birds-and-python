@@ -23,6 +23,12 @@ def apply(fx, video_in, video_out, verbose=False):
     args = '{} -vf "{}" {}'.format(video_in, fx, video_out)
     ffmpeg(args, verbose)
 
+###
+# selection
+#
+
+# select='lt((mod(n\,100)\,10)'
+
 ##
 # w/o args
 #
@@ -78,6 +84,9 @@ vignette = "vignette='PI/4+random(1)*PI/50':eval=frame"
 # Zoom videos
 zoom = "zoompan=z='min(max(zoom,pzoom)+0.0015,1.5)':d=1:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)'"
 
+# interleave 
+interleave = "select='if(gt(random(0), 0.2), 1, 4)':n=2 [tmp], random=8:2, [tmp] interleave"
+
 ##
 # w/ args
 #
@@ -92,17 +101,30 @@ def magnify(value=2):
     return "hqx={}".format(value)
 
 
-def random(frames=8):
+def _random(frames=8):
     "Randomises frames of a video"
     return "random={}:-1".format(frames)
+random = _random()
 
-
-def overlay(frames):
+def _overlay(frames=8):
     "Zoom videos"
     return "select=n=2:e='not(mod(n\, {}))'+1 [odd][even]; [odd] pad=h=2/ih [tmp]; [tmp][even] overlay=y=h".format(frames)
+overlay = _overlay()
 
 
-def blend(mode='lighten'):
+def _blend(mode='lighten'):
     "Blends frames"
     return "tblend=all_mode={}".format(mode)
+blend = _blend()
 
+
+def _faster(speed=2):
+    "Speeds up the video"
+    return "setpts={}*PTS".format(1/speed)
+faster = _faster()
+
+
+def _slower(speed=2):
+    "Slows down the video"
+    return "setpts={}*PTS".format(speed)
+slower = _slower()
