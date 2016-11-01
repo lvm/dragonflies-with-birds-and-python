@@ -36,10 +36,11 @@ class Video(object):
         if isinstance(vid, (list, tuple, set)):
             map(self.clean, vid)
         else:
-            try:
-                os.remove(vid)
-            except: # no exception for now
-                pass
+            print vid
+            #try:
+            #    os.remove(vid)
+            #except: # no exception for now
+            #    pass
 
 
     def action(self, action, args, verbose=False):

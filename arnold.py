@@ -36,10 +36,12 @@ def arnoldise(input_video, output_video, verbose=False):
         video.utils.cut(input_video, "./cut_{}_{}".format(x,output_video),
                         "00:00:{}".format(t), "00:00:05",
                         verbose)
-        video.fx.apply(
-           map(video.fx.from_string, ["slower"]),
-           "./cut_{}_{}".format(x,output_video), "./cut_{}_{}".format(x,output_video),
-           verbose)
+
+        if x % 4 == 0:
+            video.fx.apply(
+                map(video.fx.from_string, ["blend:and", "slower"]),
+                "./cut_{}_{}".format(x,output_video), "./cut_{}_{}".format(x,output_video),
+                verbose)
 
         filelist += ["cut_{}_{}".format(x,output_video)] * random.randrange(2,10)
 
