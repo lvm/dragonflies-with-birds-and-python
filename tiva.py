@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 
+"""
+TIVA: TIVA Isn't Video Art
+"""
+
 import os
 import argparse
+import itertools
 from tools import video
 from textx.metamodel import metamodel_from_file
 
@@ -26,7 +31,19 @@ class Video(object):
         return len(does) == len(expects)
 
 
+    def clean(self, vid):
+        "Removes files"
+        if isinstance(vid, (list, tuple, set)):
+            map(self.clean, vid)
+        else:
+            try:
+                os.remove(vid)
+            except: # no exception for now
+                pass
+
+
     def action(self, action, args, verbose=False):
+        "Performs an action based on the source code provided"
         if self.complies(action, args):
 
             if action == "cut":
@@ -45,25 +62,29 @@ class Video(object):
                     verbose
                 )
 
-            return args.get('render').video
+            return args.get('using').video + [args.get('render').video]
         else:
              return None
 
 
-def read(filename, verbose):
+def read(filename, clean=False, verbose=False):
     if os.path.isfile(filename):
         _model = TV.model_from_file(filename)
         v_name = os.path.splitext(os.path.basename(filename))[0]
-        video = Video(v_name)
+        vid = Video(v_name)
 
+        tmp_vids = []
         for act in _model.actions:
-            video.action(act.action,
-                         dict(using=act.using,
-                              render=act.render,
-                              start=act.start,
-                              duration=act.duration,
-                              fx=act.fx),
-                         verbose)
+            tmp_vids += [vid.action(act.action,
+                                    dict(using=act.using,
+                                         render=act.render,
+                                         start=act.start,
+                                         duration=act.duration,
+                                         fx=act.fx),
+                                    verbose)]
+        if clean:
+            tmp_vids = list(itertools.chain.from_iterable(tmp_vids))
+            vid.clean(set(tmp_vids[1:-1]))
 
 
 if __name__ == "__main__":
@@ -71,6 +92,9 @@ if __name__ == "__main__":
     parser.add_argument('-f', '--filename',
                         type=str,
                         help="Use this source code")
+    parser.add_argument('-c', '--clean',
+                        action="store_true",
+                        help="Removes all 'temporary' videos when finished")
     parser.add_argument('-V', '--verbose',
                         action="store_true",
                         help="Show stdout messages")
@@ -78,6 +102,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     if args.filename:
         read(args.filename,
+             args.clean or False,
              args.verbose or False)
     else:
         print("{} -h".format(__file))
