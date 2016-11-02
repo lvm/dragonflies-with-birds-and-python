@@ -18,6 +18,7 @@ class Video(object):
         self.actions = {
             'cut': ['start', 'duration', 'render', 'using'],
             'glue': ['using', 'render'],
+            'blend': ['using', 'render'],
             'apply': ['using', 'fx', 'render']
         }
 
@@ -56,10 +57,19 @@ class Video(object):
                 video.utils.glue(args.get('using').video, args.get('render').video,
                                  verbose)
 
+            if action == "blend":
+                video.fx.apply(
+                    video.fx.blend,
+                    args.get('using').video, args.get('render').video,
+                    True,
+                    verbose
+                )
+
             if action == "apply":
                 video.fx.apply(
                     map(video.fx.from_string, args.get('fx').list),
                     args.get('using').video, args.get('render').video,
+                    False,
                     verbose
                 )
 

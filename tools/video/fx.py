@@ -3,6 +3,9 @@
 from utils import ffmpeg
 
 __VARS = vars()
+__SIMPLE = '-vf'
+__COMPLEX = '-acodec libvo_aacenc -vcodec libx264 -filter_complex'
+
 
 def from_string(fx):
     v = None
@@ -18,7 +21,7 @@ def from_string(fx):
             return fx
 
 
-def apply(fx, video_in, video_out, verbose=False):
+def apply(fx, video_in, video_out, is_complex=False, verbose=False):
     """Applies a given `fx` to a video"""
     if isinstance(video_in, (list, tuple)):
         video_in = " ".join(map(lambda v: '-i {}'.format(v), video_in))
@@ -28,8 +31,23 @@ def apply(fx, video_in, video_out, verbose=False):
     if isinstance(fx, (list, tuple)):
         fx = ",".join(fx) if len(fx) > 1 else str(fx[0])
 
-    args = '{} -vf "{}" {}'.format(video_in, fx, video_out)
+    args = '{} {} "{}" {}'.format(video_in,
+                                  __COMPLEX if is_complex else __SIMPLE,
+                                  fx, video_out)
     ffmpeg(args, verbose)
+
+
+
+###
+# complex filters
+#
+
+# "Complex filter to blend N videos into one"
+blend = "[0:v]setpts=PTS-STARTPTS, scale=480x360[top];"
+blend += "[1:v]setpts=PTS-STARTPTS, scale=480x360,"
+blend += "format=yuva420p,colorchannelmixer=aa=0.5[bottom];"
+blend += "[top][bottom]overlay=shortest=0"
+
 
 ###
 # selection
@@ -37,7 +55,15 @@ def apply(fx, video_in, video_out, verbose=False):
 
 # select='lt((mod(n\,100)\,10)'
 
+# enable=not(mod(n\,16))
+
+def enable(frames=8):
+    "Enables a filter every N frames"
+    return "enable=not(mod(n\,{}))".format(frames or 8)
+
 ##
+# simple filters
+#
 # w/o args
 #
 
@@ -60,7 +86,7 @@ wires = "edgedetect=low=0.1:high=0.4"
 paint = "edgedetect=mode=colormix:high=0"
 
 # Inverts the colors in a video
-negate = "lutrgb='r=negval:g=negval:b=negval'"
+negative = "lutrgb='r=negval:g=negval:b=negval'"
 
 # Flips horizontally a video
 hflip = "hflip"
@@ -93,9 +119,11 @@ vignette = "vignette='PI/4+random(1)*PI/50':eval=frame"
 zoom = "zoompan=z='min(max(zoom,pzoom)+0.0015,1.5)':d=1:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)'"
 
 # interleave 
-interleave = "select='if(gt(random(0), 0.2), 1, 4)':n=2 [tmp], random=8:2, [tmp] interleave"
+interleave = "select='if(gt(random(0), 0.2), 1, 4)':n=2 [tmp], negate, [tmp] interleave"
 
 ##
+# simple filters
+#
 # w/ args
 #
 
@@ -118,7 +146,7 @@ def overlay(frames=8):
     return "select=n=2:e='not(mod(n\, {}))'+1 [odd][even]; [odd] pad=h=2/ih [tmp]; [tmp][even] overlay=y=h".format(frames or 8)
 
 
-def blend(mode='lighten'):
+def tblend(mode='lighten'):
     "Blends frames"
     return "tblend=all_mode={}".format(mode or 'lighten')
 

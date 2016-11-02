@@ -8,13 +8,14 @@ VideoActions:
         using=Using
         start=Start?
         duration=Duration?
+        every=Every?
         fx=Fx?
         render=Render
 	"}"
 ;
 
 ActionType:
-	"cut"|"glue"|"apply"
+	"cut"|"blend"|"glue"|"apply"
 ;
 
 Using:
@@ -33,10 +34,18 @@ Duration:
         'duration' time=STRING?
 ;
 
+Every:
+        'every' frames=INT?
+;
+
+Interlace:
+        'interlace' frames=INT?
+;
+
 Fx:
         'fx' list+=STRING
 ;
 
 Comment:
-  /\/\/.*$/
+  /#.*$/
 ;
