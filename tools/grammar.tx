@@ -15,7 +15,7 @@ VideoActions:
 ;
 
 ActionType:
-	"cut"|"blend"|"glue"|"apply"
+	"cut"|"blend"|"paste"|"apply"
 ;
 
 Using:

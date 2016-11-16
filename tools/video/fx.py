@@ -134,7 +134,7 @@ interleave = "select='if(gt(random(0), 0.2), 1, 8)':n=2 [tmp], negate, [tmp] int
 #
 
 def blur(value=5):
-    "Applies a `mirror effect` to a video"
+    "Blur"
     return "boxblur={}:1".format(value or 5)
 
 
@@ -148,7 +148,7 @@ def random(frames=8):
     return "random={}:-1".format(frames or 8)
 
 def overlay(frames=8):
-    "Zoom videos"
+    "Overlay"
     return "select=n=2:e='not(mod(n\, {}))'+1 [odd][even]; [odd] pad=h=2/ih [tmp]; [tmp][even] overlay=y=h".format(frames or 8)
 
 

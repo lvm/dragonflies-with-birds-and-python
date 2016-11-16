@@ -17,7 +17,7 @@ class Video(object):
         self.name = name
         self.actions = {
             'cut': ['start', 'duration', 'render', 'using'],
-            'glue': ['using', 'render'],
+            'paste': ['using', 'render'],
             'blend': ['using', 'render'],
             'apply': ['using', 'fx', 'render']
         }
@@ -53,7 +53,7 @@ class Video(object):
                                 args.get('start').time, args.get('duration').time,
                                 verbose)
 
-            if action == "glue":
+            if action == "paste":
                 video.utils.glue(args.get('using').video, args.get('render').video,
                                  verbose)
 
