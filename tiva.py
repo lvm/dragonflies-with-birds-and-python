@@ -66,8 +66,10 @@ class Video(object):
                 )
 
             if action == "apply":
+                fx_list = map(video.fx.from_string, args.get('fx').list)
+
                 video.fx.apply(
-                    map(video.fx.from_string, args.get('fx').list),
+                    fx_list,
                     args.get('using').video, args.get('render').video,
                     False,
                     verbose
@@ -90,6 +92,7 @@ def read(filename, clean=False, verbose=False):
                                     dict(using=act.using,
                                          render=act.render,
                                          start=act.start,
+                                         every=act.every,
                                          duration=act.duration,
                                          fx=act.fx),
                                     verbose)]

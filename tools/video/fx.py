@@ -61,6 +61,12 @@ def enable(frames=8):
     "Enables a filter every N frames"
     return "enable=not(mod(n\,{}))".format(frames or 8)
 
+
+def every(frames=8, fx_list=""):
+    "Every N frames..."
+    return "select=not(mod(n\,{})),{}".format(
+        frames, fx_list)
+
 ##
 # simple filters
 #
@@ -118,8 +124,8 @@ vignette = "vignette='PI/4+random(1)*PI/50':eval=frame"
 # Zoom videos
 zoom = "zoompan=z='min(max(zoom,pzoom)+0.0015,1.5)':d=1:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)'"
 
-# interleave 
-interleave = "select='if(gt(random(0), 0.2), 1, 4)':n=2 [tmp], negate, [tmp] interleave"
+# interleave
+interleave = "select='if(gt(random(0), 0.2), 1, 8)':n=2 [tmp], negate, [tmp] interleave"
 
 ##
 # simple filters
