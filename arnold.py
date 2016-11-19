@@ -2,7 +2,7 @@
 
 import random
 from tools import (
-    color, image, video, helpers
+    color, image, video, fs
 )
 import os
 import sys
@@ -24,7 +24,7 @@ IMG_GLOB = "img*.jpg"
 
 def msg(msg, verbose=False):
     if verbose:
-        print ( msg )
+        print(msg)
 
 
 def arnoldise(input_video, output_video, verbose=False):
@@ -33,20 +33,23 @@ def arnoldise(input_video, output_video, verbose=False):
     for x in range(video_length):
         t = x if x > 9 else "0{}".format(x)
 
-        video.utils.cut(input_video, "./cut_{}_{}".format(x,output_video),
+        video.utils.cut(input_video,
+                        "./cut_{}_{}".format(x, output_video),
                         "00:00:{}".format(t), "00:00:05",
                         verbose)
 
         if x % 4 == 0:
             video.fx.apply(
                 map(video.fx.from_string, ["blend:and", "slower"]),
-                "./cut_{}_{}".format(x,output_video), "./cut_{}_{}".format(x,output_video),
+                "./cut_{}_{}".format(x, output_video),
+                "./cut_{}_{}".format(x, output_video),
                 verbose)
 
-        filelist += ["cut_{}_{}".format(x,output_video)] * random.randrange(2,10)
+        filelist += ["cut_{}_{}".format(
+            x, output_video)] * random.randrange(2, 10)
 
     video.utils.glue(filelist, output_video, verbose)
-    helpers.clean(filelist)
+    fs.rm_files(filelist)
 
 
 if __name__ == "__main__":
@@ -61,7 +64,6 @@ if __name__ == "__main__":
     parser.add_argument('-V', '--verbose',
                         action="store_true",
                         help="Show stdout messages")
-
 
     args = parser.parse_args()
 

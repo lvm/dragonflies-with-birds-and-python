@@ -1,14 +1,12 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 import os
 import shlex
 import argparse
 import tempfile
 import subprocess as sp
-from ..helpers import (
-    write_file, clean
-)
+from ..helpers import write_file
+from ..fs import rm_files
 
 
 def ffmpeg(args, verbose=False):
@@ -102,14 +100,15 @@ def cut_reencode(video_in, video_out, start, duration, verbose=False):
 def glue(videos_in, video_out, verbose=False):
     "Glues a list of videos in a single one"
     if not isinstance(videos_in, (list, tuple)):
-        return # must be a list or a tuple, silly.
+        # must be a list or a tuple, silly.
+        return
 
     tmpfile = tempfile.mktemp()
     content = map(lambda v: "file '{}'".format(os.path.abspath(v)), videos_in)
     args = "-f concat -safe 0 -i {} -c copy {}".format(tmpfile, video_out)
     write_file(tmpfile, content)
     ffmpeg(args, verbose)
-    clean(tmpfile)
+    rm_files(tmpfile)
 
 
 def convert_framerate(video_in, video_out, fps=12, verbose=False):

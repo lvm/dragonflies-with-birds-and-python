@@ -7,71 +7,6 @@ from glob import glob
 from helpers import pc
 
 
-
-# def avg_color_data(images_format):
-#     result = {}
-#     _dict = {}
-#     _list = []
-#     images = glob(images_format)
-
-#     n=0
-#     for img in images:
-#         sys.stdout.write("\r {} of {}".format(n, len(images)))
-#         sys.stdout.flush()
-#         avg = color.avg_color(img)
-#         #avg = color.dominant(img)
-#         if not _dict.has_key("{}{}{}".format(*avg)):
-#             _dict[ "{}{}{}".format(*avg) ] = img
-#             _list.append( avg )
-#         n += 1
-
-#     return (_list, _dict)
-
-
-# def build_set(_list, _dict):
-#     image_list = []
-#     _list.sort(key=lambda rgb: color.luminance(*rgb))
-#     for c_item in _list:
-#         #complementary = color.complementary_rgb(c_item)
-#         #closest_color = color.find_closest(complementary, _list)
-#         #close_colors = color.find_close(complementary, _list)
-
-#         #for x in range(4):
-#         image_list.append(_dict.get("{}{}{}".format(*c_item)))
-
-#         #for x in range(4):
-#         #image_list.append(_dict.get("{}{}{}".format(*closest_color)))
-
-#     return image_list
-
-
-# def avg_color_data(images_format):
-#     result = {}
-#     _dict = {}
-#     _list = []
-
-#     for img in glob(images_format):
-#         sys.stdout.write("\rProcessing: {}".format(img))
-#         sys.stdout.flush()
-#         pal = color.extract_palette(img,1)
-
-#         rgb_color = (0,0,0)
-#         try:
-#             rgb_color = map(to_tuple, color.in_format(pal, 'rgb'))[0]
-#             _list.append(rgb_color)
-#         except:
-#             pass
-
-#         if not _dict.has_key("{}".format(rgb_color)):
-#             _dict["{}".format(rgb_color)] = [img]
-#         else:
-#             _dict["{}".format(rgb_color)].append(img)
-
-
-#     print _dict
-
-#     return (_list, _dict)
-
 def color_data(images_path, by_type='avg', verbose=False):
     result = {}
     _dict = {}
@@ -90,7 +25,7 @@ def color_data(images_path, by_type='avg', verbose=False):
             rgb_color = color.dominant(img)
         n += 1
 
-        if not _dict.has_key("{}".format(rgb_color)):
+        if rgb_color not in _dict.keys():
             _dict["{}".format(rgb_color)] = []
 
         _dict["{}".format(rgb_color)].append(img)
@@ -108,7 +43,7 @@ def build_set(_dict, sort_by='hsv'):
     elif sort_by == 'hsv':
         _list.sort(key=lambda rgb: color.rgb_to_hsv(to_tuple(rgb)))
     elif sort_by == 'lum':
-        _list.sort( key=lambda rgb: color.luminance(to_tuple(rgb)))
+        _list.sort(key=lambda rgb: color.luminance(to_tuple(rgb)))
 
     rgb_list = map(to_tuple, _list)
     for c_item in _list:
@@ -127,13 +62,14 @@ def build_set_complementary(_dict, sort_by='hsv', every=4):
     elif sort_by == 'hsv':
         _list.sort(key=lambda rgb: color.rgb_to_hsv(to_tuple(rgb)))
     elif sort_by == 'lum':
-        _list.sort( key=lambda rgb: color.luminance(to_tuple(rgb)))
+        _list.sort(key=lambda rgb: color.luminance(to_tuple(rgb)))
 
     n = 0
     for c_item in _list:
         if n % every == 0:
             complementary = color.complementary_rgb(to_tuple(c_item))
-            closest_color = color.find_closest(complementary, map(to_tuple, _list))
+            closest_color = color.find_closest(complementary,
+                                               map(to_tuple, _list))
             image_list += _dict.get("{}".format(str(closest_color)))
 
         image_list += _dict.get("{}".format(c_item))

@@ -7,10 +7,13 @@ TIVA: TIVA Isn't Video Art
 import os
 import argparse
 import itertools
-from tools import video
+from tools import (
+    video, fs
+)
 from textx.metamodel import metamodel_from_file
 
 TV = metamodel_from_file('tools/grammar.tx', ignore_case=True)
+
 
 class Video(object):
     def __init__(self, name):
@@ -22,7 +25,6 @@ class Video(object):
             'apply': ['using', 'fx', 'render']
         }
 
-
     def complies(self, action, args):
         "Just tries to find the expected words in the codeblock"
         expects = self.actions.get(action)
@@ -31,30 +33,27 @@ class Video(object):
 
         return len(does) == len(expects)
 
-
     def clean(self, vid):
         "Removes files"
         if isinstance(vid, (list, tuple, set)):
             map(self.clean, vid)
         else:
-            print vid
-            #try:
-            #    os.remove(vid)
-            #except: # no exception for now
-            #    pass
-
+            fs.rm_files(vid)
 
     def action(self, action, args, verbose=False):
         "Performs an action based on the source code provided"
         if self.complies(action, args):
 
             if action == "cut":
-                video.utils.cut(args.get('using').video, args.get('render').video,
-                                args.get('start').time, args.get('duration').time,
+                video.utils.cut(args.get('using').video,
+                                args.get('render').video,
+                                args.get('start').time,
+                                args.get('duration').time,
                                 verbose)
 
             if action == "paste":
-                video.utils.glue(args.get('using').video, args.get('render').video,
+                video.utils.glue(args.get('using').video,
+                                 args.get('render').video,
                                  verbose)
 
             if action == "blend":
@@ -77,7 +76,7 @@ class Video(object):
 
             return args.get('using').video + [args.get('render').video]
         else:
-             return None
+            return None
 
 
 def read(filename, clean=False, verbose=False):

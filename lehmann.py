@@ -19,9 +19,10 @@ TV_DIR = os.path.join(CACHE_DIR, "to")
 IMG_FORMAT = "img%09d.jpg"
 IMG_GLOB = "img*.jpg"
 
+
 def msg(msg, verbose=False):
     if verbose:
-        print ( msg )
+        print(msg)
 
 
 def save_palette(filename, palette):
@@ -39,7 +40,8 @@ def lehmannise(input_video, output_video, verbose=False):
                           os.path.join(FV_DIR, IMG_FORMAT), verbose)
 
     msg(">> get color from imgs", verbose)
-    imgs_data = image.color_data(os.path.join(FV_DIR, IMG_GLOB), 'avg', verbose)
+    imgs_data = image.color_data(os.path.join(FV_DIR, IMG_GLOB),
+                                 'avg', verbose)
 
     msg(">> build set of imgs", verbose)
     imgs_list = image.build_set_complementary(imgs_data, '', 8)
@@ -48,7 +50,9 @@ def lehmannise(input_video, output_video, verbose=False):
     fs.copy(imgs_list, TV_DIR, IMG_FORMAT)
 
     msg(">> imgs to video", verbose)
-    video.utils.to_video(output_video, os.path.join(TV_DIR, IMG_FORMAT), 12, verbose)
+    video.utils.to_video(output_video,
+                         os.path.join(TV_DIR, IMG_FORMAT),
+                         12, verbose)
 
     msg(">> cleaning cache dirs", verbose)
     fs.rm_dir([FV_DIR, TV_DIR, CACHE_DIR, TEMP_DIR])

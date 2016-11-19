@@ -37,7 +37,6 @@ def apply(fx, video_in, video_out, is_complex=False, verbose=False):
     ffmpeg(args, verbose)
 
 
-
 ###
 # complex filters
 #
@@ -74,7 +73,8 @@ def every(frames=8, fx_list=""):
 #
 
 # Applies a `mirror effect` to a video
-mirror = "crop=iw/2:ih:0:0,split[left][tmp];[tmp]hflip[right];[left][right] hstack"
+mirror = "crop=iw/2:ih:0:0,split[left][tmp];"
+mirror += "[tmp]hflip[right];[left][right] hstack"
 
 # Converts a video to b/w
 greyscale = "colorchannelmixer=.3:.4:.3:0:.3:.4:.3:0:.3:.4:.3"
@@ -122,16 +122,19 @@ portrait = "transpose=1:portrait"
 vignette = "vignette='PI/4+random(1)*PI/50':eval=frame"
 
 # Zoom videos
-zoom = "zoompan=z='min(max(zoom,pzoom)+0.0015,1.5)':d=1:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)'"
+zoom = "zoompan=z='min(max(zoom,pzoom)+0.0015,1.5)':"
+zoom += "d=1:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)'"
 
 # interleave
-interleave = "select='if(gt(random(0), 0.2), 1, 8)':n=2 [tmp], negate, [tmp] interleave"
+interleave = "select='if(gt(random(0), 0.2), 1, 8)':"
+interleave += "n=2 [tmp], negate, [tmp] interleave"
 
 ##
 # simple filters
 #
 # w/ args
 #
+
 
 def blur(value=5):
     "Blur"
@@ -147,9 +150,12 @@ def random(frames=8):
     "Randomises frames of a video"
     return "random={}:-1".format(frames or 8)
 
+
 def overlay(frames=8):
     "Overlay"
-    return "select=n=2:e='not(mod(n\, {}))'+1 [odd][even]; [odd] pad=h=2/ih [tmp]; [tmp][even] overlay=y=h".format(frames or 8)
+    _overlay = "select=n=2:e='not(mod(n\, {}))'+1 ".format(frames or 8)
+    _overlay += "[odd][even]; [odd] pad=h=2/ih [tmp]; [tmp][even] overlay=y=h"
+    return _overlay
 
 
 def tblend(mode='lighten'):
