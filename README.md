@@ -1,4 +1,4 @@
-# dragonflies with birds and python
+# Dragonflies with birds and python
 
 This is a ~~silly~~ *pretty basic* video editing library that stands on top of `ffmpeg`. Also has it's own scripting language and interpreter called `tiva` to ease the job of editing video.  
 
